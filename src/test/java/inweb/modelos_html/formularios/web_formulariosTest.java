@@ -15,6 +15,7 @@ import static inclui.formularios.control_entradas.k_entradas_tipo_texto;
 import innui.formularios.controles;
 import static innui.formularios.formularios.k_fase_captura;
 import innui.modelos.errores.oks;
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -81,7 +82,7 @@ public class web_formulariosTest {
         Object[] extras_array = null;
         web_formularios instance = new web_formularios();
         boolean expResult = false;
-        boolean result = instance.iniciar(ruta_plantilla, ok, extras_array);
+        boolean result = instance.iniciar(ruta_plantilla, null, null, ok, extras_array);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -142,14 +143,14 @@ public class web_formulariosTest {
      * Test of iniciar_datos_mapa method, of class web_formularios.
      */
     @Ignore
-    public void testIniciar_datos_mapa() throws Exception {
+    public void testIniciar_valores_mapa() throws Exception {
         System.out.println("iniciar_datos_mapa");
         Map<String, String> datos_mapa = null;
         oks ok = null;
         Object[] extras_array = null;
         web_formularios instance = new web_formularios();
         boolean expResult = false;
-        boolean result = instance.iniciar_datos_mapa(datos_mapa, ok, extras_array);
+        boolean result = instance.iniciar_valores_mapa(datos_mapa, ok, extras_array);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -167,6 +168,8 @@ public class web_formulariosTest {
         web_formularios web_formulario = new web_formularios();
         String url_tex = "/re/templates/formularios/fragmentos/fragmentos_principales.html";
         boolean expResult = true;
+        Map<String, String> valores_mapa = new HashMap<>();
+        web_formulario.iniciar_valores_mapa(valores_mapa, ok, extras_array);
         control_entradas entrada_texto = new control_entradas();
         entrada_texto.iniciar(k_entradas_tipo_texto, ok);
         assertEquals(true, ok.es);
@@ -281,9 +284,8 @@ public class web_formulariosTest {
         entrada_submit.iniciar(k_entradas_tipo_submit, ok);
         assertEquals(true, ok.es);
         entrada_submit.poner_en_formulario(web_formulario, "submit", null, "¿Desea enviar el formulario? (Si no es así, se cancelará). ", null, ok);
-        assertEquals(true, ok.es);
-        
-        web_formulario.iniciar(url_tex, ok, extras_array);
+        assertEquals(true, ok.es);        
+        web_formulario.iniciar(url_tex, null, null, ok, extras_array);
         assertTrue(ok.es);
         boolean result = web_formulario.procesar(modo_operacion, ok, extras_array);
         assertEquals(expResult, result);

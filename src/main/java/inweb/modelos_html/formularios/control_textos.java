@@ -1,15 +1,15 @@
 package inweb.modelos_html.formularios;
 
+import innui.formularios.controles;
+import static innui.formularios.controles.k_opciones_mapa_no_requerido;
 import innui.formularios.formularios;
 import static innui.formularios.formularios.k_fase_captura;
 import innui.modelos.configuraciones.ResourceBundles;
 import innui.modelos.errores.oks;
 import innui.modelos.internacionalizacion.tr;
 import static inweb.modelos_html.formularios.web_formularios.k_datos_mapa_atributos_tex;
-import static inweb.modelos_html.formularios.web_formularios.k_datos_mapa_clave_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_datos_mapa_mensaje_de_captura_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_datos_mapa_valor_tex;
-import static inweb.modelos_html.formularios.web_formularios.k_fragmento_control_entradas;
 import java.util.Map;
 import java.util.ResourceBundle;
 import static inweb.modelos_html.formularios.web_formularios.k_web_formularios_procesamiento_plantilla;
@@ -21,11 +21,11 @@ import static inweb.modelos_html.formularios.web_formularios.k_datos_mapa_contro
  *
  * @author emilio
  */
-public class control_entradas extends inclui.formularios.control_entradas {
+public class control_textos extends controles {
     public static String k_in_ruta = "in/inweb/modelos_html/formularios/in";
+    public static String k_nombre_fragmento = "nombre_fragmento";
     public procesamiento_plantillas _procesamiento_plantilla = null;
-    public static String k_atributo_required = "required";
-    public String fragmento_nombre = k_fragmento_control_entradas;
+    public String fragmento_nombre = null;
 
     public String getFragmento_nombre() {
         return fragmento_nombre;
@@ -64,7 +64,7 @@ public class control_entradas extends inclui.formularios.control_entradas {
      * @throws Exception 
      */
     @Override
-    @SuppressWarnings({"unchecked", "unchecked"})
+    @SuppressWarnings("unchecked")
     public Object _capturar(String modo_operacion, Object objeto_a_capturar, oks ok, Object ... extras_array) throws Exception {
         String control_html = null;
         try {
@@ -82,15 +82,15 @@ public class control_entradas extends inclui.formularios.control_entradas {
                     for (Entry<String, Object> entry: opciones_mapa.entrySet()) {
                         clave_entry = entry.getKey();
                         valor_entry = entry.getValue();
-                        if (clave_entry.equals(k_opciones_mapa_no_requerido)) {
+                        if (clave_entry.equals(k_opciones_mapa_no_requerido)
+                         || clave_entry.equals(k_nombre_fragmento)) {
                             continue;
                         }
                         if (valor_entry == null) {
                             valor_entry = "";
                         }
                         if (valor_entry instanceof String) {
-                            if (valores_mapa != null 
-                             && valores_mapa.containsKey(clave_entry)) {
+                            if (valores_mapa.containsKey(clave_entry)) {
                                 valores_mapa.put(clave_entry, valor_entry.toString());
                             } else {
                                 atributos_tex = atributos_tex 
@@ -99,27 +99,23 @@ public class control_entradas extends inclui.formularios.control_entradas {
                             }
                         }
                     }
-                    if (this.opciones_mapa.containsKey(k_opciones_mapa_no_requerido) == false) {
-                        atributos_tex = atributos_tex 
-                        + " " + k_atributo_required 
-                        + "=\"true\"";
-                    }
                 }
                 if (valores_mapa != null) {
-                    valores_mapa.put(k_datos_mapa_atributos_tex, atributos_tex);
-                    valores_mapa.put(k_datos_mapa_clave_tex, clave);
-                    if (_control_tipo.equals(k_entradas_tipo_hidden)
-                     || _control_tipo.equals(k_entradas_tipo_submit)
-                     || _control_tipo.equals(k_entradas_tipo_reset)
-                     || _control_tipo.equals(k_entradas_tipo_boton)
-                     || _control_tipo.equals(k_entradas_tipo_checkbox)
-                     || _control_tipo.equals(k_entradas_tipo_radio)
-                     || _control_tipo.equals(k_entradas_tipo_con_imagen)) {
-                        valores_mapa.put(k_datos_mapa_valor_tex, mensaje_de_captura);                        
+                    String texto;
+                    if (mensaje_de_captura == null) {
+                        texto = "";
                     } else {
-                        valores_mapa.put(k_datos_mapa_mensaje_de_captura_tex, mensaje_de_captura);
+                        texto = mensaje_de_captura;
                     }
-                    valores_mapa.put(k_datos_mapa_control_tipo_tex, _control_tipo);
+                    valores_mapa.put(k_datos_mapa_mensaje_de_captura_tex, texto);
+                    valores_mapa.put(k_datos_mapa_valor_tex, texto);
+                    if (_control_tipo == null) {
+                        texto = "";
+                    } else {
+                        texto = _control_tipo;
+                    }
+                    valores_mapa.put(k_datos_mapa_control_tipo_tex, texto);
+                    valores_mapa.put(k_datos_mapa_atributos_tex, atributos_tex);
                 }
                 control_html = _procesamiento_plantilla.procesar_fragmento(fragmentos_lista, valores_mapa, ok, extras_array);
             }
@@ -198,15 +194,18 @@ public class control_entradas extends inclui.formularios.control_entradas {
                 in = ResourceBundles.getBundle(k_in_ruta);
                 ok.setTxt(tr.in(in, "Se espera que el valor del control sea: Map<String, String> "));
             }
+            if (ok.es == false) { return false; }
             super.poner_en_formulario(formulario, clave, valor, mensaje_de_captura, opciones_mapa, ok, extras_array);
-            if (ok.id.equals(k_entradas_clui_lectura)) {
-                ok.iniciar();
-            }
             if (ok.es) {
                 _procesamiento_plantilla = (procesamiento_plantillas) this.opciones_mapa.get(k_web_formularios_procesamiento_plantilla);
                 if (_procesamiento_plantilla == null) {
                     in = ResourceBundles.getBundle(k_in_ruta);
                     ok.setTxt(tr.in(in, "Falta la entrada del mapa: ") + k_web_formularios_procesamiento_plantilla);
+                }
+                fragmento_nombre = (String) this.opciones_mapa.get(k_nombre_fragmento);
+                if (fragmento_nombre == null) {
+                    in = ResourceBundles.getBundle(k_in_ruta);
+                    ok.setTxt(tr.in(in, "Falta la entrada del mapa: ") + k_nombre_fragmento);
                 }
             }
         } catch (Exception e) {

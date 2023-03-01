@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 public class procesamiento_plantillas extends bases {
     public static String k_in_ruta = "in/inweb/modelos_html/formularios/in";
     public static String k_th_fragment="th:fragment";
+    public static String k_error_fragmento_no_encontrado = "Fragmento no encontrado. ";
     public String ruta_plantillas_fragmento;
     public InputStream plantillas_fragmento_inputstream;
     public List<String> etiquetas_y_texto_lista = new LinkedList<>();
@@ -71,7 +72,7 @@ public class procesamiento_plantillas extends bases {
     }
     
     public Integer _encontrar_fin_de_texto_literal(String donde_buscar, char fin, int i, oks ok, Object ... extras_array) throws Exception {
-        Integer retorno = null; 
+        Integer retorno = -1; 
         try {
             if (ok.es == false) { return null; }
             int tam = donde_buscar.length();
@@ -108,29 +109,40 @@ public class procesamiento_plantillas extends bases {
             int tam = plantillas_fragmento_tex.length();
             int inicio = 0;
             int fin = 0;
+            boolean es_etiqueta = false;
             String etiqueta;
             while (true) {
                 if (i >= tam) {
                     break;
                 }
                 if (plantillas_fragmento_tex.charAt(i) == '<') {
+                    es_etiqueta = true;
                     fin = i;
                     etiqueta = plantillas_fragmento_tex.substring(inicio, fin);
                     if (etiqueta.isEmpty() == false) {
                         etiquetas_y_texto_lista.add(etiqueta);
                     }
                     inicio = i;
-                } else if (plantillas_fragmento_tex.charAt(i) == '"') {
-                    i = _encontrar_fin_de_texto_literal(plantillas_fragmento_tex, '"', i, ok);
-                } else if (plantillas_fragmento_tex.charAt(i) == '\'') {
-                    i = _encontrar_fin_de_texto_literal(plantillas_fragmento_tex, '\'', i, ok);
-                } else if (plantillas_fragmento_tex.charAt(i) == '>') {
-                    fin = i;
-                    etiqueta = plantillas_fragmento_tex.substring(inicio, fin + 1);
-                    if (etiqueta.isEmpty() == false) {
-                        etiquetas_y_texto_lista.add(etiqueta);
+                } else if (es_etiqueta) {
+                    if (plantillas_fragmento_tex.charAt(i) == '"') {
+                        i = _encontrar_fin_de_texto_literal(plantillas_fragmento_tex, '"', i, ok);
+                        if (i == -1 || ok.es == false) { 
+                            break; 
+                        }
+                    } else if (plantillas_fragmento_tex.charAt(i) == '\'') {
+                        i = _encontrar_fin_de_texto_literal(plantillas_fragmento_tex, '\'', i, ok);
+                        if (i == -1 || ok.es == false) { 
+                            break; 
+                        }
+                    } else if (plantillas_fragmento_tex.charAt(i) == '>') {
+                        fin = i;
+                        etiqueta = plantillas_fragmento_tex.substring(inicio, fin + 1);
+                        if (etiqueta.isEmpty() == false) {
+                            etiquetas_y_texto_lista.add(etiqueta);
+                        }
+                        inicio = i + 1;
+                        es_etiqueta = false;
                     }
-                    inicio = i + 1;
                 }
                 i = i + 1;
             }
@@ -152,7 +164,7 @@ public class procesamiento_plantillas extends bases {
             if (ok.es == false) { return -1; }
             int i = inicio;
             int tam = donde_buscar.length();
-            tam = tam - que_buscar.length();
+            tam = tam - que_buscar.length() + 1;
             while (true) {
                 if (i >= tam) {
                     break;
@@ -162,10 +174,10 @@ public class procesamiento_plantillas extends bases {
                     break;
                 } else if (donde_buscar.charAt(i) == '"') {
                     i = _encontrar_fin_de_texto_literal(donde_buscar, '"', i, ok);
-                    if (ok.es == false) { break; }
+                    if (i == -1 || ok.es == false) { break; }
                 } else if (donde_buscar.charAt(i) == '\'') {
                     i = _encontrar_fin_de_texto_literal(donde_buscar, '\'', i, ok);
-                    if (ok.es == false) { break; }
+                    if (i == -1 || ok.es == false) { break; }
                 }
                 i = i +1;
             }
@@ -182,7 +194,7 @@ public class procesamiento_plantillas extends bases {
             if (ok.es == false) { return -1; }
             int i = inicio;
             int tam = donde_buscar.length();
-            tam = tam - que_buscar.length();
+            tam = tam - que_buscar.length() + 1;
             while (true) {
                 if (i >= tam) {
                     break;
@@ -285,9 +297,10 @@ public class procesamiento_plantillas extends bases {
                     break;
                 }
             }
-            if (fragmento_lista.isEmpty()) {
+            if (fragmento_lista == null || fragmento_lista.isEmpty()) {
                 in = ResourceBundles.getBundle(k_in_ruta);
-                ok.setTxt(tr.in(in, "Fragmento no encontrado. "));
+                ok.id = k_error_fragmento_no_encontrado;
+                ok.setTxt(tr.in(in, k_error_fragmento_no_encontrado));
             }
         } catch (Exception e) {
             throw e;
@@ -327,6 +340,9 @@ public class procesamiento_plantillas extends bases {
                     if (i >= 0) {
                         fin = i + 1;
                         i = _buscar_sin_texto_literal(contenido, true, " ", i, ok, extras_array);
+                        if (i < 0) {
+                            i = _buscar_sin_texto_literal(contenido, true, ">", fin - 1, ok, extras_array);
+                        }
                         if (i > 0) {
                             String entre_comillas = contenido.substring(fin, i - 1);
                             entre_comillas = entre_comillas.replace(",", " ");
@@ -337,20 +353,22 @@ public class procesamiento_plantillas extends bases {
                     }
                 }
             }
-            for (Entry<String, String> entry: datos_mapa.entrySet()) {
-                reemplazo = "${" + entry.getKey() + "}";
-                if (contenido.contains(reemplazo)) {
-                    valor = entry.getValue();
-                    if (valor == null) {
-                        valor = "";
-                    } else {
-                        valor = valor.replace("${", k_reemplazo_artificial);
+            if (datos_mapa != null) {
+                for (Entry<String, String> entry: datos_mapa.entrySet()) {
+                    reemplazo = "${" + entry.getKey() + "}";
+                    if (contenido.contains(reemplazo)) {
+                        valor = entry.getValue();
+                        if (valor == null) {
+                            valor = "";
+                        } else {
+                            valor = valor.replace("${", k_reemplazo_artificial);
+                        }
+                        contenido = contenido.replace(reemplazo, valor);
                     }
-                    contenido = contenido.replace(reemplazo, valor);
                 }
+                contenido = contenido.replace(k_reemplazo_artificial, "${");
+                contenido = contenido.replace(k_reemplazo_th, " ");
             }
-            contenido = contenido.replace(k_reemplazo_artificial, "${");
-            contenido = contenido.replace(k_reemplazo_th, " ");
         } catch (Exception e) {
             throw e;
         }
@@ -377,6 +395,7 @@ public class procesamiento_plantillas extends bases {
             String contenido = null;
             String atributo_tex = null;
             String reemplazo = null;
+            String texto_previo;
             for (String parte: fragmento_lista) {
                 if (contenido == null) {
                     i = _buscar_sin_texto_literal(parte, true, k_th_utext, 0, ok);
@@ -390,7 +409,8 @@ public class procesamiento_plantillas extends bases {
                         }
                     }
                     if (i >= 0) {
-                        texto = parte.substring(0, i);
+                        modo = k_modo_buscar_igual;
+                        texto_previo = parte.substring(0, i);
                         i = i + atributo_tex.length();
                         tam = parte.length();
                         while (true) {
@@ -409,32 +429,35 @@ public class procesamiento_plantillas extends bases {
                                 if (letra_tex.equals("\"")) {
                                     inicio = i;
                                     fin = _encontrar_fin_de_texto_literal(parte, '\"', i, ok);
-                                    if (ok.es == false) { break; }
+                                    if (fin == -1 || ok.es == false) { break; }
                                     contenido = parte.substring(inicio + 1, fin);
                                     break;
                                 } else if (letra_tex.equals("\'")) {
                                     inicio = i;
                                     fin = _encontrar_fin_de_texto_literal(parte, '\'', i, ok);
-                                    if (ok.es == false) { break; }
+                                    if (fin == -1 || ok.es == false) { break; }
                                     contenido = parte.substring(inicio + 1, fin);
                                     break;
                                 } else if (letra_tex.isBlank() == false) {
-                                    ok.setTxt(tr.in(in, "Formato incorrecto: ") + k_th_utext);
+                                    ok.setTxt(tr.in(in, "Formato incorrecto: ") + atributo_tex);
                                     break;
                                 }
                             }                    
                             i = i + 1;
                         }
                         if (ok.es == false) { break; }
-                        texto = texto + parte.substring(fin + 1);
+                        texto_previo = texto_previo + parte.substring(fin + 1);
+                        texto_previo = _sustituir_contenido(texto_previo, datos_mapa, ok);
+                        if (ok.es == false) { break; }
                         contenido = _sustituir_contenido(contenido, datos_mapa, ok);
+                        if (ok.es == false) { break; }
                         if (atributo_tex.equals(k_th_text)) {
                             contenido = _poner_escape_HTML(contenido, ok);
                             if (ok.es == false) { break; }
                         }
-                        texto = texto + contenido;
+                        texto = texto + texto_previo + contenido;
                         if (parte.endsWith("/>") == false) {
-                            etiqueta = _extraer_etiqueta(texto, ok);
+                            etiqueta = _extraer_etiqueta(texto_previo, ok);
                             etiqueta = "<\\s*/\\s*" + etiqueta + ".+";
                         } else {
                             contenido = null;

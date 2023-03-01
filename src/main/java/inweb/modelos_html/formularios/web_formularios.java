@@ -2,7 +2,10 @@ package inweb.modelos_html.formularios;
 
 import innui.formularios.formularios;
 import innui.formularios.controles;
+import static innui.formularios.controles.k_opciones_mapa_no_requerido;
 import innui.modelos.errores.oks;
+import static inweb.modelos_html.formularios.control_entradas.k_atributo_required;
+import static inweb.modelos_html.formularios.procesamiento_plantillas.k_error_fragmento_no_encontrado;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +37,18 @@ public class web_formularios extends formularios {
     public static String k_datos_mapa_mensaje_tex = "mensaje_tex";
     public procesamiento_plantillas procesamiento_plantilla = new procesamiento_plantillas();
     public String contenido_formulario_html = "";
+    public String fragmento_nombre = k_fragmento_web_formularios;
+    Map<String, String> valores_mapa = null;
+    Map<String, Object> opciones_mapa = null;
 
+    public String getNombre_fragmento() {
+        return fragmento_nombre;
+    }
+
+    public void setNombre_fragmento(String nombre_fragmento) {
+        this.fragmento_nombre = nombre_fragmento;
+    }
+    
     public procesamiento_plantillas getProcesa_plantilla() {
         return procesamiento_plantilla;
     }
@@ -47,11 +61,13 @@ public class web_formularios extends formularios {
         return contenido_formulario_html;
     }
     
-    public boolean iniciar(String ruta_plantilla, oks ok, Object ... extras_array) throws Exception {
+    public boolean iniciar(String ruta_plantilla, Map<String, String> valores_mapa, Map<String, Object> opciones_mapa, oks ok, Object ... extras_array) throws Exception {
         try {
             if (ok.es == false) { return false; }
             procesamiento_plantilla.iniciar(ruta_plantilla, ok);
             if (ok.es == false) { return false; }
+            this.valores_mapa = valores_mapa;
+            this.opciones_mapa = opciones_mapa;
         } catch (Exception e) {
             throw e;
         }
@@ -106,15 +122,47 @@ public class web_formularios extends formularios {
             if (modo_operacion.equals(k_fase_captura)) {
                 super._terminar_formulario(modo_operacion, ok, extras_array);
                 if (ok.es == false) { return false; }
-                fragmentos_lista = procesamiento_plantilla.extraer_fragmento(k_fragmento_web_formularios, ok, extras_array);
-                if (ok.es == false) { return false; }
-                if (datos_mapa == null) {
-                    datos_mapa = new HashMap<>();
+                fragmentos_lista = procesamiento_plantilla.extraer_fragmento(fragmento_nombre, ok, extras_array);
+                if (ok.id.equals(k_error_fragmento_no_encontrado) == false) {
+                    if (ok.es == false) { return false; }
+                    String clave_entry;
+                    Object valor_entry;
+                    String atributos_tex = "";
+                    if (opciones_mapa != null) {
+                        for (Map.Entry<String, Object> entry: opciones_mapa.entrySet()) {
+                            clave_entry = entry.getKey();
+                            valor_entry = entry.getValue();
+                            if (clave_entry.equals(k_opciones_mapa_no_requerido)) {
+                                continue;
+                            }
+                            if (valor_entry == null) {
+                                valor_entry = "";
+                            }
+                            if (valor_entry instanceof String) {
+                                if (datos_mapa.containsKey(clave_entry)) {
+                                    datos_mapa.put(clave_entry, valor_entry.toString());
+                                } else {
+                                    atributos_tex = atributos_tex 
+                                    + " " + clave_entry 
+                                    + "=\"" + valor_entry.toString() + "\"";
+                                }
+                            }
+                        }
+                        if (this.opciones_mapa.containsKey(k_opciones_mapa_no_requerido) == false) {
+                            atributos_tex = atributos_tex 
+                            + " " + k_atributo_required 
+                            + "=\"true\"";
+                        }
+                    }
+                    if (valores_mapa != null) {
+                        valores_mapa.put(k_datos_mapa_atributos_tex, atributos_tex);
+                        valores_mapa.put(k_datos_mapa_contenido_formulario_tex, contenido_formulario_html);
+                    }
+                    contenido_formulario_html = procesamiento_plantilla.procesar_fragmento(fragmentos_lista, valores_mapa, ok, extras_array);
+                    if (ok.es == false) { return false; }
+                } else {
+                    ok.iniciar();
                 }
-                iniciar_datos_mapa(datos_mapa, ok);
-                datos_mapa.put(k_datos_mapa_contenido_formulario_tex, contenido_formulario_html);
-                contenido_formulario_html = procesamiento_plantilla.procesar_fragmento(fragmentos_lista, datos_mapa, ok, extras_array);
-                if (ok.es == false) { return false; }
             }
         } catch (Exception e) {
             throw e;
@@ -129,9 +177,10 @@ public class web_formularios extends formularios {
      * @return
      * @throws Exception 
      */
-    public boolean iniciar_datos_mapa(Map<String, String> datos_mapa, oks ok, Object ... extras_array) throws Exception {
+    public boolean iniciar_valores_mapa(Map<String, String> datos_mapa, oks ok, Object ... extras_array) throws Exception {
         try {
             if (ok.es == false) { return false; }
+            datos_mapa.clear();
             datos_mapa.put(k_datos_mapa_url_destino_tex, "");
             datos_mapa.put(k_datos_mapa_metodo_tex, "GET");
             datos_mapa.put(k_datos_mapa_contenido_formulario_tex, "");
