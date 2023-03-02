@@ -260,6 +260,7 @@ public class procesamiento_plantillas extends bases {
             if (ok.es == false) { return null; }
             int i = 0;
             int encontrado_pos;
+            int anidamientos_num = 0;
             String etiqueta = "";
             String nuevo_texto;
             String modo = k_modo_buscar_fragmento;
@@ -290,8 +291,14 @@ public class procesamiento_plantillas extends bases {
                     }
                 } else if (modo.equals(k_modo_poner_texto_en_lista)) {
                     fragmento_lista.add(texto);
+                    if (texto.matches("(?i)<\\s*" + etiqueta + ".+")) {
+                        anidamientos_num = anidamientos_num + 1;
+                    }
                     if (texto.matches("(?i)<\\s*/\\s*" + etiqueta + ".+")) {
-                        break;
+                        anidamientos_num = anidamientos_num - 1;
+                        if (anidamientos_num < 0) {
+                            break;
+                        }
                     }
                 } else {
                     break;

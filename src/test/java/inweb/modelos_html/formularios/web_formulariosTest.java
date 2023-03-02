@@ -65,7 +65,7 @@ public class web_formulariosTest {
         System.out.println("getFormulario_html");
         web_formularios instance = new web_formularios();
         String expResult = "";
-        String result = instance.getFormulario_html();
+        String result = instance.getContenido_formulario_html();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -140,23 +140,6 @@ public class web_formulariosTest {
     }
 
     /**
-     * Test of iniciar_datos_mapa method, of class web_formularios.
-     */
-    @Ignore
-    public void testIniciar_valores_mapa() throws Exception {
-        System.out.println("iniciar_datos_mapa");
-        Map<String, String> datos_mapa = null;
-        oks ok = null;
-        Object[] extras_array = null;
-        web_formularios instance = new web_formularios();
-        boolean expResult = false;
-        boolean result = instance.iniciar_valores_mapa(datos_mapa, ok, extras_array);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of capturar method, of class web_formularios.
      */
     @Test
@@ -169,7 +152,7 @@ public class web_formulariosTest {
         String url_tex = "/re/templates/formularios/fragmentos/fragmentos_principales.html";
         boolean expResult = true;
         Map<String, String> valores_mapa = new HashMap<>();
-        web_formulario.iniciar_valores_mapa(valores_mapa, ok, extras_array);
+        web_formulario._crear_valores_mapa(valores_mapa, ok, extras_array);
         control_entradas entrada_texto = new control_entradas();
         entrada_texto.iniciar(k_entradas_tipo_texto, ok);
         assertEquals(true, ok.es);
