@@ -8,13 +8,19 @@
         th:style="${style_tex}"
         th:utext="${contenido_formulario_tex}"></form>
 </div>
+<div th:fragment="web_formularios_sin_form">
+    <div th:attr="${atributos_error_tex}"
+        th:style="${style_mensaje_error_tex}"
+        th:utext="${mensaje_error_tex}"></div>
+    <div th:utext="${contenido_formulario_tex}"></div>
+</div>
 <div th:fragment="control_entradas"><label>
     <div th:attr="${atributos_error_tex}"
         th:style="${style_mensaje_error_tex}"
         th:utext="${mensaje_error_tex}"></div>        
     <spam th:text="${mensaje_de_captura_tex}"></spam>
     <input th:type="${control_tipo_tex}"
-        th:id="${clave_tex}"
+        th:id="${id_tex}"
         th:name="${clave_tex}"
         th:value="${valor_tex}"
         th:attr="${atributos_tex}"
@@ -25,7 +31,7 @@
         th:style="${style_mensaje_error_tex}"
         th:utext="${mensaje_error_tex}"></div>        
     <spam th:text="${mensaje_de_captura_tex}"></spam>
-    <textarea th:id="${clave_tex}"
+    <textarea th:id="${id_tex}"
         th:name="${clave_tex}"
         th:attr="${atributos_tex}"
         th:style="${style_tex}"
@@ -35,7 +41,7 @@
         th:style="${style_mensaje_error_tex}"
         th:utext="${mensaje_error_tex}"></div>        
     <spam th:text="${mensaje_de_captura_tex}"></spam>
-    <select th:id="${clave_tex}"
+    <select th:id="${id_tex}"
         th:name="${clave_tex}"
         th:attr="${atributos_tex}"
         th:style="${style_tex}"

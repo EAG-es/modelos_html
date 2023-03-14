@@ -18,6 +18,7 @@ public class web_formularios extends formularios {
     public static String k_in_ruta = "in/inweb/modelos_html/formularios/in";
     public static String k_web_formularios_procesamiento_plantilla = "web_formularios_procesa_plantilla";
     public static String k_fragmento_web_formularios = "web_formularios";
+    public static String k_fragmento_web_formularios_sin_form = "web_formularios_sin_form";
     public static String k_fragmento_control_entradas = "control_entradas";
     public static String k_fragmento_control_textareas = "control_textareas";
     public static String k_fragmento_control_selecciones = "control_selecciones";
@@ -34,6 +35,7 @@ public class web_formularios extends formularios {
     public static String k_valores_mapa_control_entradas = "control_entradas";
     public static String k_valores_mapa_mensaje_de_captura_tex = "mensaje_de_captura_tex";
     public static String k_valores_mapa_control_tipo_tex = "control_tipo_tex";
+    public static String k_valores_mapa_id_tex = "id_tex";
     public static String k_valores_mapa_clave_tex = "clave_tex";
     public static String k_valores_mapa_valor_tex = "valor_tex";
     public static String k_valores_mapa_mensaje_error_tex = "mensaje_error_tex";
@@ -50,12 +52,20 @@ public class web_formularios extends formularios {
     public Map<String, String> valores_mapa = null;
     public Map<String, Object> opciones_mapa = null;
 
-    public String getNombre_fragmento() {
+    public web_formularios() {
+        fragmento_nombre = k_fragmento_web_formularios;
+    }
+    
+    public web_formularios(String fragmento_nombre) {
+        this.fragmento_nombre = fragmento_nombre;
+    }
+    
+    public String getFragmento_nombre() {
         return fragmento_nombre;
     }
 
-    public void setNombre_fragmento(String nombre_fragmento) {
-        this.fragmento_nombre = nombre_fragmento;
+    public void setFragmento_nombre(String fragmento_nombre) {
+        this.fragmento_nombre = fragmento_nombre;
     }
     
     public procesamiento_plantillas getProcesa_plantilla() {
@@ -97,6 +107,32 @@ public class web_formularios extends formularios {
     public boolean escribir_error(String mensaje, oks ok, Object ... extras_array) {
         return escribir_linea_error(mensaje, ok, extras_array);
     }
+    /**
+     * Cambia el fragmento por defecto para que sea uno sin la etiqueta form.
+     * @param ok
+     * @param extras_array
+     * @return
+     * @throws Exception 
+     */
+    public boolean configurar_sin_form(oks ok, Object ... extras_array) throws Exception {
+        try {
+            if (ok.es == false) { return false; }
+            fragmento_nombre = k_fragmento_web_formularios_sin_form;
+        } catch (Exception e) {
+            throw e;
+        }
+        return ok.es;
+    }
+    /**
+     * Prepara las plantillas y los valores potenciales que poner en ellas
+     * @param ruta_plantilla
+     * @param valores_mapa
+     * @param opciones_mapa
+     * @param ok
+     * @param extras_array
+     * @return
+     * @throws Exception 
+     */
     public boolean iniciar(String ruta_plantilla, Map<String, String> valores_mapa, Map<String, Object> opciones_mapa, oks ok, Object ... extras_array) throws Exception {
         try {
             if (ok.es == false) { return false; }
@@ -231,6 +267,7 @@ public class web_formularios extends formularios {
             datos_mapa.put(k_valores_mapa_control_entradas, "");
             datos_mapa.put(k_valores_mapa_mensaje_de_captura_tex, "");
             datos_mapa.put(k_valores_mapa_control_tipo_tex, "");
+            datos_mapa.put(k_valores_mapa_id_tex, "");
             datos_mapa.put(k_valores_mapa_clave_tex, "");
             datos_mapa.put(k_valores_mapa_valor_tex, "");
             datos_mapa.put(k_valores_mapa_mensaje_error_tex, "");

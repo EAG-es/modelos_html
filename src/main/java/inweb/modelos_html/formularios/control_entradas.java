@@ -26,6 +26,7 @@ import static inweb.modelos_html.formularios.web_formularios.k_web_formularios_p
 import java.util.List;
 import java.util.Map.Entry;
 import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_control_tipo_tex;
+import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_id_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_mensaje_de_captura_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_mensaje_error_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_style_tex;
@@ -125,6 +126,12 @@ public class control_entradas extends inclui.formularios.control_entradas {
                 }
             }
             valores_mapa.put(k_valores_mapa_atributos_tex, atributos_tex);
+            if(_control_tipo.equals(k_entradas_tipo_radio)) {
+                String valor_tex = valores_mapa.get(k_valores_mapa_valor_tex);
+                valores_mapa.put(k_valores_mapa_id_tex, clave + "-" + valor_tex);
+            } else {
+                valores_mapa.put(k_valores_mapa_id_tex, clave);
+            }
             valores_mapa.put(k_valores_mapa_clave_tex, clave);
             if (_control_tipo == null) {
                 _control_tipo = "";

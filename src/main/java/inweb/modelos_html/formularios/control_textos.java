@@ -1,19 +1,12 @@
 package inweb.modelos_html.formularios;
 
-import static innui.formularios.controles.k_opciones_mapa_no_requerido;
 import innui.formularios.formularios;
 import innui.modelos.configuraciones.ResourceBundles;
 import innui.modelos.errores.oks;
 import innui.modelos.internacionalizacion.tr;
 import static inweb.modelos_html.formularios.web_formularios.k_nombre_fragmento;
-import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_atributos_tex;
-import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_control_tipo_tex;
-import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_mensaje_de_captura_tex;
-import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_valor_tex;
-import static inweb.modelos_html.formularios.web_formularios.k_web_formularios_procesamiento_plantilla;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Map.Entry;
 
 /**
  *
