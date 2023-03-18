@@ -8,7 +8,6 @@ import innui.modelos.internacionalizacion.tr;
 import static inweb.modelos_html.formularios.web_formularios.k_fragmento_control_opciones_selecciones;
 import static inweb.modelos_html.formularios.web_formularios.k_fragmento_control_selecciones;
 import static inweb.modelos_html.formularios.web_formularios.k_nombre_fragmento;
-import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_contenido_select_tex;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_contenido_tex;
 
 /**
  *
@@ -23,10 +23,10 @@ import java.util.ResourceBundle;
  */
 public class control_selecciones extends control_entradas {
     public static String k_in_ruta = "in/inweb/modelos_html/formularios/in";
-    public static String k_opciones_mapa_control_selecciones = "opciones_mapa_control_selecciones";
+    public static String k_control_selecciones_opciones_mapa = "opciones_mapa_control_selecciones";
     public Map<String, Object> control_selecciones_mapa;
-    control_bucle_textos _control_bucle_texto = new control_bucle_textos();
-    web_formularios _web_formulario = new web_formularios();
+    public control_bucle_clave_valor _control_bucle_texto = new control_bucle_clave_valor();
+    public web_formularios _web_formulario = new web_formularios();
     
     public control_selecciones() {
         _control_tipo = k_entradas_tipo_texto;
@@ -41,13 +41,40 @@ public class control_selecciones extends control_entradas {
      * @throws Exception 
      */
     public boolean cargar_control_con_propiedades(String ruta, oks ok, Object ... extras_array) throws Exception {
-        control_selecciones_mapa = inclui.formularios.control_selecciones.cargar_propiedades(ruta, ok, extras_array);
-        if (opciones_mapa != null) {
-            opciones_mapa.put(k_opciones_mapa_control_selecciones, control_selecciones_mapa);
+        if (ok.es == false) { return false; }
+        try {
+            control_selecciones_mapa = inclui.formularios.control_selecciones.cargar_propiedades(ruta, ok, extras_array);
+            _procesar_selecciones_mapa(ok, extras_array);
+        } catch (Exception e) {
+            throw e;
         }
         return ok.es;
     }
-
+    /**
+     * Carga el control con el contenido de un archivo de propiedades
+     * @param selecciones_mapa
+     * @param ok
+     * @param extras_array
+     * @return
+     * @throws Exception 
+     */
+    public boolean cargar_selecciones(Map<String, Object> selecciones_mapa, oks ok, Object ... extras_array) throws Exception {
+        if (ok.es == false) { return false; }
+        try {
+            control_selecciones_mapa = selecciones_mapa;
+            _procesar_selecciones_mapa(ok, extras_array);
+        } catch (Exception e) {
+            throw e;
+        }
+        return ok.es;
+    }
+    /**
+     * Prepara el mapa de selecciones para ser presentado entrada a entrada
+     * @param ok
+     * @param extras_array
+     * @return
+     * @throws Exception 
+     */
     public boolean _procesar_selecciones_mapa(oks ok, Object ... extras_array) throws Exception {
         try {
             List<Entry<String, Object>> bucle_datos_lista = new ArrayList<>();
@@ -82,7 +109,7 @@ public class control_selecciones extends control_entradas {
                 object = _control_bucle_texto.procesar(modo_operacion, valor, ok, extras_array);
                 if (ok.es == false) { return null; }
                 String texto_html = object.toString();
-                getValor().put(k_valores_mapa_contenido_select_tex, texto_html);
+                getValor().put(k_valores_mapa_contenido_tex, texto_html);
             }
         } catch (Exception e) {
             throw e;
@@ -98,16 +125,15 @@ public class control_selecciones extends control_entradas {
             super.poner_en_formulario(formulario, clave, valor, mensaje_de_captura, opciones_mapa, ok, extras_array);
             if (ok.es) {
                 if (control_selecciones_mapa == null) {
-                    control_selecciones_mapa = (Map<String, Object>) this.opciones_mapa.get(k_opciones_mapa_control_selecciones);
+                    control_selecciones_mapa = (Map<String, Object>) this.opciones_mapa.get(k_control_selecciones_opciones_mapa);
                     if (control_selecciones_mapa == null) {
                         in = ResourceBundles.getBundle(k_in_ruta);
-                        ok.setTxt(tr.in(in, "No se ha cargado el control selecciones con propiedades (o datos). "));
+                        ok.setTxt(tr.in(in, "No se ha cargado el control selecciones con la opcion: ") + k_control_selecciones_opciones_mapa);
+                    } else {
+                        _procesar_selecciones_mapa(ok, extras_array);
+                        this.opciones_mapa.remove(k_control_selecciones_opciones_mapa);
                     }
                 }
-            }
-            if (ok.es) {
-                _procesar_selecciones_mapa(ok, extras_array);
-                this.opciones_mapa.remove(k_opciones_mapa_control_selecciones);
             }
         } catch (Exception e) {
             throw e;

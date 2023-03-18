@@ -5,6 +5,7 @@ import innui.modelos.configuraciones.ResourceBundles;
 import innui.modelos.configuraciones.Resources;
 import innui.modelos.errores.oks;
 import innui.modelos.internacionalizacion.tr;
+import innui.utiles.strings.literales;
 import inweb.modelos_html.html_escapes;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -26,32 +27,35 @@ public class procesamiento_plantillas extends bases {
     public static String k_error_fragmento_no_encontrado = "Fragmento no encontrado. ";
     public String ruta_plantillas_fragmento;
     public InputStream plantillas_fragmento_inputstream;
-    public List<String> etiquetas_y_texto_lista = new LinkedList<>();
-    public String plantillas_fragmento_tex = "";
+    public LinkedList<String> etiquetas_y_texto_lista = new LinkedList<>();
 
     public boolean iniciar(String ruta, oks ok, Object ... extras_array) throws Exception {
         ResourceBundle in = null;
         try {
             if (ok.es == false) { return false; }
+            LinkedList<String> lista;
             plantillas_fragmento_inputstream = Resources.getResourceAsStream(ruta);
             if (plantillas_fragmento_inputstream == null) {
                 in = ResourceBundles.getBundle(k_in_ruta);
                 ok.setTxt(tr.in( in, "Error abriendo la plantilla con fragmentos: ") + ruta);
             }
-            _leer_plantillas_fragmento(ok);
+            String texto = _leer_plantillas_fragmento(ok);
             if (ok.es == false) { return false; }
-            _procesar_plantillas_fragmento(ok);
+            lista = _procesar_plantillas_fragmento(texto, ok);
             if (ok.es == false) { return false; }
+            etiquetas_y_texto_lista.addAll(0, lista);
         } catch (Exception e) {
             throw e;
         }
         return ok.es;
     }
     
-    public boolean _leer_plantillas_fragmento(oks ok, Object ... extras_array) throws Exception {
+    public String _leer_plantillas_fragmento(oks ok, Object ... extras_array) throws Exception {
         ResourceBundle in = null;
+        String plantillas_fragmento_tex = null;
         try {
-            if (ok.es == false) { return false; }
+            if (ok.es == false) { return null; }
+            plantillas_fragmento_tex = "";
             BufferedReader reader = new BufferedReader(new InputStreamReader(plantillas_fragmento_inputstream, StandardCharsets.UTF_8));
             char [] char_array = new char[100];
             int leidos_num;
@@ -68,49 +72,34 @@ public class procesamiento_plantillas extends bases {
             in = ResourceBundles.getBundle(k_in_ruta);
             ok.setTxt(tr.in(in, "Error leyendo el texto de la plantilla con los fragmentos. "), e);
         }
-        return ok.es;
+        return plantillas_fragmento_tex;
+    }
+    /**
+     * Encuentra el final de un texto literal, terminando en el caracter fin.
+     * @param donde_buscar
+     * @param fin
+     * @param i
+     * @param ok
+     * @param extras_array
+     * @return
+     * @throws Exception 
+     */        
+    public Integer _encontrar_fin_de_texto_literal(String donde_buscar, char fin, int i, oks ok, Object ... extras_array) throws Exception {
+        return literales._encontrar_fin_de_texto_literal(donde_buscar, fin, i, ok, extras_array);
     }
     
-    public Integer _encontrar_fin_de_texto_literal(String donde_buscar, char fin, int i, oks ok, Object ... extras_array) throws Exception {
-        Integer retorno = -1; 
+    public LinkedList<String> _procesar_plantillas_fragmento(String plantillas_fragmento_tex, oks ok, Object ... extras_array) throws Exception {
+        ResourceBundle in = null;
+        LinkedList<String> resultado_etiquetas_y_texto_lista = null;
         try {
             if (ok.es == false) { return null; }
-            int tam = donde_buscar.length();
-            int escapes_num = 0;
-            while (true) {
-                i = i +1;
-                if (i >= tam) {
-                    break;
-                }
-                if (donde_buscar.charAt(i) == '\\') {
-                    escapes_num = escapes_num + 1;
-                } else {
-                    if (donde_buscar.charAt(i) == fin) {
-                        if (escapes_num %2 == 0) {
-                            // número par de escapes consecutivos
-                            retorno = i;
-                            break;
-                        }
-                    }
-                    escapes_num = 0;
-                }
-            }
-        } catch (Exception e) {
-            throw e;
-        }
-        return retorno;
-    }
-    
-    public boolean _procesar_plantillas_fragmento(oks ok, Object ... extras_array) throws Exception {
-        ResourceBundle in = null;
-        try {
-            if (ok.es == false) { return false; }
             int i = 0;
             int tam = plantillas_fragmento_tex.length();
             int inicio = 0;
             int fin = 0;
             boolean es_etiqueta = false;
             String etiqueta;
+            resultado_etiquetas_y_texto_lista = new LinkedList<>();
             while (true) {
                 if (i >= tam) {
                     break;
@@ -120,7 +109,7 @@ public class procesamiento_plantillas extends bases {
                     fin = i;
                     etiqueta = plantillas_fragmento_tex.substring(inicio, fin);
                     if (etiqueta.isEmpty() == false) {
-                        etiquetas_y_texto_lista.add(etiqueta);
+                        resultado_etiquetas_y_texto_lista.add(etiqueta);
                     }
                     inicio = i;
                 } else if (es_etiqueta) {
@@ -138,8 +127,8 @@ public class procesamiento_plantillas extends bases {
                         fin = i;
                         etiqueta = plantillas_fragmento_tex.substring(inicio, fin + 1);
                         if (etiqueta.isEmpty() == false) {
-                            etiquetas_y_texto_lista.add(etiqueta);
-                        }
+                                resultado_etiquetas_y_texto_lista.add(etiqueta);
+                            }
                         inicio = i + 1;
                         es_etiqueta = false;
                     }
@@ -149,69 +138,43 @@ public class procesamiento_plantillas extends bases {
             fin = tam;
             etiqueta = plantillas_fragmento_tex.substring(inicio, fin);
             if (etiqueta.isEmpty() == false) {
-                etiquetas_y_texto_lista.add(etiqueta);
-            }
+                        resultado_etiquetas_y_texto_lista.add(etiqueta);
+                    }
         } catch (Exception e) {
             throw e;
         }
-        return ok.es;
+        return resultado_etiquetas_y_texto_lista;
     }
     
+    /**
+     * Busca un texto saltándo las cadenas entrecomillas dobles y simples
+     * @param donde_buscar
+     * @param ignorar_caso
+     * @param que_buscar
+     * @param inicio
+     * @param ok
+     * @param extras_array
+     * @return
+     * @throws Exception 
+     */
     public int _buscar_sin_texto_literal(String donde_buscar, boolean ignorar_caso, String que_buscar, int inicio, oks ok, Object ... extras_array) throws Exception {
-        int encontrado_pos = -1;
-        ResourceBundle in = null;
-        try {
-            if (ok.es == false) { return -1; }
-            int i = inicio;
-            int tam = donde_buscar.length();
-            tam = tam - que_buscar.length() + 1;
-            while (true) {
-                if (i >= tam) {
-                    break;
-                }
-                if (donde_buscar.regionMatches(ignorar_caso, i, que_buscar, 0, que_buscar.length())) {
-                    encontrado_pos = i;
-                    break;
-                } else if (donde_buscar.charAt(i) == '"') {
-                    i = _encontrar_fin_de_texto_literal(donde_buscar, '"', i, ok);
-                    if (i == -1 || ok.es == false) { break; }
-                } else if (donde_buscar.charAt(i) == '\'') {
-                    i = _encontrar_fin_de_texto_literal(donde_buscar, '\'', i, ok);
-                    if (i == -1 || ok.es == false) { break; }
-                }
-                i = i +1;
-            }
-        } catch (Exception e) {
-            throw e;
-        }
-        return encontrado_pos;
+        return literales.buscar_sin_texto_literal(donde_buscar, ignorar_caso, que_buscar, inicio, ok, extras_array);
     }
-
+    /**
+     * Busca un texto a continuación de la posición de inicio
+     * @param donde_buscar
+     * @param ignorar_caso
+     * @param que_buscar
+     * @param inicio
+     * @param ok
+     * @param extras_array
+     * @return
+     * @throws Exception 
+     */
     public int _buscar_seguido(String donde_buscar, boolean ignorar_caso, String que_buscar, int inicio, oks ok, Object ... extras_array) throws Exception {
-        int encontrado_pos = -1;
-        ResourceBundle in = null;
-        try {
-            if (ok.es == false) { return -1; }
-            int i = inicio;
-            int tam = donde_buscar.length();
-            tam = tam - que_buscar.length() + 1;
-            while (true) {
-                if (i >= tam) {
-                    break;
-                }
-                if (donde_buscar.regionMatches(ignorar_caso, i, que_buscar, 0, que_buscar.length())) {
-                    encontrado_pos = i;
-                    break;
-                } else if (("" + donde_buscar.charAt(i)).isBlank() == false) {
-                    return -1;
-                }
-                i = i + 1;
-            }
-        } catch (Exception e) {
-            throw e;
-        }
-        return encontrado_pos;
+        return literales.buscar_seguido(donde_buscar, ignorar_caso, que_buscar, inicio, ok, extras_array);
     }
+    
     public String _extraer_etiqueta(String texto, oks ok, Object ... extras_array) throws Exception {
         String etiqueta = "";
         ResourceBundle in = null;

@@ -33,22 +33,6 @@ public class procesar_plantillasTest {
     }
 
     /**
-     * Test of _leer_plantillas_fragmento method, of class procesamiento_plantillas.
-     */
-    @Ignore
-    public void test_leer_plantillas_fragmento() throws Exception {
-        System.out.println("_leer_plantillas_fragmento");
-        oks ok = null;
-        Object[] extras_array = null;
-        procesamiento_plantillas instance = new procesamiento_plantillas();
-        boolean expResult = false;
-        boolean result = instance._leer_plantillas_fragmento(ok, extras_array);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of _encontrar_fin_de_texto_literal method, of class procesamiento_plantillas.
      */
     @Ignore
@@ -60,22 +44,6 @@ public class procesar_plantillasTest {
         procesamiento_plantillas instance = new procesamiento_plantillas();
         Integer expResult = null;
         Integer result = instance._encontrar_fin_de_texto_literal("'aqui'", fin, 0, ok, extras_array);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of _procesar_plantillas_fragmento method, of class procesamiento_plantillas.
-     */
-    @Ignore
-    public void test_procesar_plantillas_fragmento() throws Exception {
-        System.out.println("_procesar_plantillas_fragmento");
-        oks ok = null;
-        Object[] extras_array = null;
-        procesamiento_plantillas instance = new procesamiento_plantillas();
-        boolean expResult = false;
-        boolean result = instance._procesar_plantillas_fragmento(ok, extras_array);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

@@ -29,8 +29,10 @@ import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_cont
 import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_id_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_mensaje_de_captura_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_mensaje_error_tex;
+import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_style_fragmento_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_style_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_valor_tex;
+import java.util.HashMap;
 
 /**
  *
@@ -41,6 +43,10 @@ public class control_entradas extends inclui.formularios.control_entradas {
     public static String k_valores_mapa_style_texto_tex = "style_texto_tex";
     public static String k_valores_mapa_style_submit_tex = "style_submit_tex";
     public static String k_valores_mapa_style_reset_tex = "style_reset_tex";
+    public static String k_valores_mapa_style_fragmento_texto_tex = "style_fragmento_texto_tex";
+    public static String k_valores_mapa_style_fragmento_submit_tex = "style_fragmento_submit_tex";
+    public static String k_valores_mapa_style_fragmento_reset_tex = "style_fragmento_reset_tex";
+    public static String k_valores_mapa_style_fragmento_cancelar_tex = "style_fragmento_reset_tex";
     public procesamiento_plantillas _procesamiento_plantilla = null;
     public static String k_atributo_required = " required = \"true\"";
     public String fragmento_nombre = k_fragmento_control_entradas;
@@ -151,10 +157,13 @@ public class control_entradas extends inclui.formularios.control_entradas {
             }
             if (_control_tipo.equals(k_entradas_tipo_reset)) {
                 valores_mapa.put(k_valores_mapa_style_tex, valores_mapa.get(k_valores_mapa_style_reset_tex));
+                valores_mapa.put(k_valores_mapa_style_fragmento_tex, valores_mapa.get(k_valores_mapa_style_fragmento_reset_tex));
             } else if (_control_tipo.equals(k_entradas_tipo_submit)) {
                 valores_mapa.put(k_valores_mapa_style_tex, valores_mapa.get(k_valores_mapa_style_submit_tex));
+                valores_mapa.put(k_valores_mapa_style_fragmento_tex, valores_mapa.get(k_valores_mapa_style_fragmento_submit_tex));
             } else if (_control_tipo.equals(k_entradas_tipo_texto)) {
                 valores_mapa.put(k_valores_mapa_style_tex, valores_mapa.get(k_valores_mapa_style_texto_tex)); 
+                valores_mapa.put(k_valores_mapa_style_fragmento_tex, valores_mapa.get(k_valores_mapa_style_fragmento_texto_tex));
             }
             valores_mapa.put(k_valores_mapa_control_tipo_tex, _control_tipo);
         } catch (Exception e) {
@@ -200,6 +209,15 @@ public class control_entradas extends inclui.formularios.control_entradas {
         }
         return objeto_a_terminar;
     }    
+    public boolean modificar_valor(Map<String, String> valores_mapa, oks ok, Object ... extras_array) throws Exception {
+        if (ok.es == false) { return false; }
+        try {
+            getValor().putAll(valores_mapa);
+        } catch (Exception e) {
+            throw e;
+        }
+        return ok.es;
+    }
     /**
      * Conecta un control con un formulario
      * @param formulario Formulario donde incorporar el control (por orden de inclusión)
@@ -232,9 +250,15 @@ public class control_entradas extends inclui.formularios.control_entradas {
         ResourceBundle in;
         try {
             if (ok.es == false) { return false; }
-            if (valor != null && (valor instanceof Map) == false) {
-                in = ResourceBundles.getBundle(k_in_ruta);
-                ok.setTxt(tr.in(in, "Se espera que el valor del control sea: Map<String, String> "));
+            if (valor != null) {
+                if ((valor instanceof Map) == false) {
+                    in = ResourceBundles.getBundle(k_in_ruta);
+                    ok.setTxt(tr.in(in, "Se espera que el valor del control sea: Map<String, String> "));
+                }
+            } else {
+                if (this.valor == null) {
+                    this.valor = new HashMap<>();
+                }
             }
             if (ok.es == false) { return false; }
             super.poner_en_formulario(formulario, clave, valor, mensaje_de_captura, opciones_mapa, ok, extras_array);
@@ -272,8 +296,10 @@ public class control_entradas extends inclui.formularios.control_entradas {
             if (ok.es == false) { return null; }
             Map<String, String> nuevo_mapa = null;
             if (_formulario instanceof web_formularios web_formulario) {
-                nuevo_mapa = web_formulario._crear_valores_mapa(nuevos_datos_mapa, ok);
+                web_formulario._crear_valores_mapa(null, ok);
                 if (ok.es == false) { return null; }
+                nuevo_mapa = new HashMap<>();
+                nuevo_mapa.putAll(web_formulario.valores_mapa);
                 nuevo_mapa.put(k_valores_mapa_style_texto_tex, "width:100%;height:28px;margin-top:5px;margin-bottom:5px;");
                 nuevo_mapa.put(k_valores_mapa_style_submit_tex, "width:100%;height:28px;margin-top:5px;margin-bottom:5px;background-color: darkseagreen;");
                 nuevo_mapa.put(k_valores_mapa_style_reset_tex, "width:100%;height:28px;margin-top:5px;margin-bottom:5px;background-color: darksalmon;");
@@ -281,7 +307,11 @@ public class control_entradas extends inclui.formularios.control_entradas {
                 if (nuevos_datos_mapa != null) {
                     nuevo_mapa.putAll(nuevos_datos_mapa);
                 }
-                valor = nuevo_mapa;
+                if (valor == null) {
+                    valor = nuevo_mapa;
+                } else {
+                    getValor().putAll(nuevo_mapa);
+                }
             } else {
                 in = ResourceBundles.getBundle(k_in_ruta);
                 ok.setTxt(tr.in(in, "El parámetro: formulario, no deriva o es de la clase web_formularios "));

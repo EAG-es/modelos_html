@@ -7,6 +7,7 @@ import innui.modelos.errores.oks;
 import static inweb.modelos_html.formularios.control_entradas.k_atributo_required;
 import static inweb.modelos_html.formularios.procesamiento_plantillas.k_error_fragmento_no_encontrado;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ public class web_formularios extends formularios {
     public static String k_fragmento_web_formularios = "web_formularios";
     public static String k_fragmento_web_formularios_sin_form = "web_formularios_sin_form";
     public static String k_fragmento_control_entradas = "control_entradas";
+    public static String k_fragmento_control_redirecciones = "control_redirecciones";
     public static String k_fragmento_control_textareas = "control_textareas";
     public static String k_fragmento_control_selecciones = "control_selecciones";
     public static String k_fragmento_control_opciones_selecciones = "control_opciones_selecciones";
@@ -30,6 +32,8 @@ public class web_formularios extends formularios {
     public static String k_valores_mapa_contenido_formulario_tex = "contenido_formulario_tex";
     public static String k_valores_mapa_style_tex = "style_tex";
     public static String k_valores_mapa_style_mensaje_error_tex = "style_mensaje_error_tex";
+    public static String k_valores_mapa_style_fragmento_tex = "style_fragmento_tex";
+    public static String k_valores_mapa_style_mensaje_de_captura_tex = "style_mensaje_de_captura_tex";
     public static String k_valores_mapa_atributos_tex = "atributos_tex";
     public static String k_valores_mapa_atributos_error_tex = "atributos_error_tex";
     public static String k_valores_mapa_control_entradas = "control_entradas";
@@ -41,7 +45,7 @@ public class web_formularios extends formularios {
     public static String k_valores_mapa_mensaje_error_tex = "mensaje_error_tex";
     public static String k_valores_mapa_mensaje_tex = "mensaje_tex";
     public static String k_valores_mapa_contenido_input_tex = "contenido_input_tex";
-    public static String k_valores_mapa_contenido_select_tex = "contenido_select_tex";
+    public static String k_valores_mapa_contenido_tex = "contenido_tex";
     public static String k_atributo_checked = " checked ";
     public static String k_atributo_selected = " selected ";
     public static String k_nombre_fragmento = "nombre_fragmento";
@@ -139,8 +143,14 @@ public class web_formularios extends formularios {
             contenido_formulario_html = "";
             procesamiento_plantilla.iniciar(ruta_plantilla, ok);
             if (ok.es == false) { return false; }
-            this.valores_mapa = _crear_valores_mapa(valores_mapa, ok, extras_array);
-            this.opciones_mapa = opciones_mapa;
+            _crear_valores_mapa(valores_mapa, ok, extras_array);
+            if (ok.es == false) { return false; }
+            if (opciones_mapa != null) {
+                if (this.opciones_mapa == null) {
+                    this.opciones_mapa = new LinkedHashMap<>();
+                }
+                this.opciones_mapa.putAll(opciones_mapa);
+            }
         } catch (Exception e) {
             throw e;
         }
@@ -255,31 +265,35 @@ public class web_formularios extends formularios {
      * @return
      * @throws Exception 
      */
-    public Map<String, String> _crear_valores_mapa(Map<String, String> nuevos_datos_mapa, oks ok, Object ... extras_array) throws Exception {
+    public boolean _crear_valores_mapa(Map<String, String> nuevos_datos_mapa, oks ok, Object ... extras_array) throws Exception {
         try {
-            if (ok.es == false) { return null; }
-            Map<String, String> datos_mapa = new HashMap<>();
-            datos_mapa.put(k_valores_mapa_url_destino_tex, "");
-            datos_mapa.put(k_valores_mapa_metodo_tex, "GET");
-            datos_mapa.put(k_valores_mapa_contenido_formulario_tex, "");
-            datos_mapa.put(k_valores_mapa_atributos_tex, "");
-            datos_mapa.put(k_valores_mapa_atributos_error_tex, "");
-            datos_mapa.put(k_valores_mapa_control_entradas, "");
-            datos_mapa.put(k_valores_mapa_mensaje_de_captura_tex, "");
-            datos_mapa.put(k_valores_mapa_control_tipo_tex, "");
-            datos_mapa.put(k_valores_mapa_id_tex, "");
-            datos_mapa.put(k_valores_mapa_clave_tex, "");
-            datos_mapa.put(k_valores_mapa_valor_tex, "");
-            datos_mapa.put(k_valores_mapa_mensaje_error_tex, "");
-            datos_mapa.put(k_valores_mapa_mensaje_tex, "");
-            datos_mapa.put(k_valores_mapa_style_tex, "");
-            datos_mapa.put(k_valores_mapa_style_mensaje_error_tex, "color:red;");
-            datos_mapa.put(k_valores_mapa_contenido_input_tex, "");
-            datos_mapa.put(k_valores_mapa_contenido_select_tex, "");
-            if (nuevos_datos_mapa != null) {
-                datos_mapa.putAll(nuevos_datos_mapa);
+            if (ok.es == false) { return false; }
+            if (valores_mapa == null) {
+                valores_mapa = new HashMap<>();
+                valores_mapa.put(k_valores_mapa_url_destino_tex, "");
+                valores_mapa.put(k_valores_mapa_metodo_tex, "GET");
+                valores_mapa.put(k_valores_mapa_contenido_formulario_tex, "");
+                valores_mapa.put(k_valores_mapa_atributos_tex, "");
+                valores_mapa.put(k_valores_mapa_atributos_error_tex, "");
+                valores_mapa.put(k_valores_mapa_control_entradas, "");
+                valores_mapa.put(k_valores_mapa_mensaje_de_captura_tex, "");
+                valores_mapa.put(k_valores_mapa_control_tipo_tex, "");
+                valores_mapa.put(k_valores_mapa_id_tex, "");
+                valores_mapa.put(k_valores_mapa_clave_tex, "");
+                valores_mapa.put(k_valores_mapa_valor_tex, "");
+                valores_mapa.put(k_valores_mapa_mensaje_error_tex, "");
+                valores_mapa.put(k_valores_mapa_mensaje_tex, "");
+                valores_mapa.put(k_valores_mapa_style_tex, "");
+                valores_mapa.put(k_valores_mapa_style_mensaje_error_tex, "color:red;");
+                valores_mapa.put(k_valores_mapa_style_fragmento_tex, "");
+                valores_mapa.put(k_valores_mapa_style_mensaje_de_captura_tex, "");
+                valores_mapa.put(k_valores_mapa_contenido_input_tex, "");
+                valores_mapa.put(k_valores_mapa_contenido_tex, "");
             }
-            return datos_mapa;
+            if (nuevos_datos_mapa != null) {
+                valores_mapa.putAll(nuevos_datos_mapa);
+            }
+            return ok.es;
         } catch (Exception e) {
             throw e;
         }

@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
  *
  * @author emilio
  */
-public class control_bucle_textos extends control_textos {
+public class control_bucle_clave_valor extends control_textos {
     public static String k_in_ruta = "in/inweb/modelos_html/formularios/in";
     public List<Entry<String, Object>> bucle_datos_lista = null;
     public String bucle_datos_seleccion = null;
