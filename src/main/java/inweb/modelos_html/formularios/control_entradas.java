@@ -14,6 +14,7 @@ import static innui.formularios.formularios.k_fase_captura;
 import static innui.formularios.formularios.k_fase_procesamiento;
 import innui.modelos.configuraciones.ResourceBundles;
 import innui.modelos.errores.oks;
+import innui.modelos.errores.patrones;
 import innui.modelos.internacionalizacion.tr;
 import static inweb.modelos_html.formularios.web_formularios.k_atributo_checked;
 import static inweb.modelos_html.formularios.web_formularios.k_fragmento_control_entradas;
@@ -447,6 +448,19 @@ public class control_entradas extends inclui.formularios.control_entradas {
     @SuppressWarnings("unchecked")
     public Map<String, String> getValor() {
         return (Map<String, String>) valor;
+    }
+    
+    @Override
+    public boolean _validar_numero(Object objeto_a_validar, oks ok, Object ... extras_array) throws Exception {
+        if (objeto_a_validar == null) {
+            return false;
+        }
+        return patrones.validar_decimal_us(objeto_a_validar.toString(), false, ok, extras_array);
+    }
+
+    @Override
+    public Double _convertir_numero(Object objeto_a_convertir, oks ok, Object ... extras_array) throws Exception {
+        return patrones.convertir_decimal_us(objeto_a_convertir.toString(), false, ok, extras_array);
     }
     
 }

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -46,6 +47,7 @@ public class web_formularios extends formularios {
     public static String k_valores_mapa_mensaje_tex = "mensaje_tex";
     public static String k_valores_mapa_contenido_input_tex = "contenido_input_tex";
     public static String k_valores_mapa_contenido_tex = "contenido_tex";
+    public static String k_valores_mapa_lenguaje_tex = "lenguaje_tex";
     public static String k_atributo_checked = " checked ";
     public static String k_atributo_selected = " selected ";
     public static String k_nombre_fragmento = "nombre_fragmento";
@@ -289,6 +291,7 @@ public class web_formularios extends formularios {
                 valores_mapa.put(k_valores_mapa_style_mensaje_de_captura_tex, "");
                 valores_mapa.put(k_valores_mapa_contenido_input_tex, "");
                 valores_mapa.put(k_valores_mapa_contenido_tex, "");
+                valores_mapa.put(k_valores_mapa_lenguaje_tex, "es");
             }
             if (nuevos_datos_mapa != null) {
                 valores_mapa.putAll(nuevos_datos_mapa);
@@ -321,5 +324,29 @@ public class web_formularios extends formularios {
         }
         return ok.es;
     }    
-
+    /**
+     * Añade o modifica un valor dentro de uno (o más de un control) identificado por su nombre
+     * @param nombre_control
+     * @param clave
+     * @param valor
+     * @param ok
+     * @param extras_array
+     * @return El mapa de valores de texto que representan los valores del control que ha sido modificado
+     * @throws Exception 
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, String> importar_valor_en_controles(String nombre_control, String clave, String valor, oks ok, Object ... extras_array) throws Exception {
+        Map<String, String> retorno_mapa = null;
+        try {
+            if (ok.es == false) { return null; }
+            List<Map.Entry<String, Object>> controles_lista = exportar_valores(nombre_control, ok, extras_array);
+            for (Entry<String, Object> entry : controles_lista) {
+                retorno_mapa = (Map<String, String>) entry.getValue();
+                retorno_mapa.put(clave, valor);
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        return retorno_mapa;
+    }    
 }

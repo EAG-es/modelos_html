@@ -4,6 +4,7 @@ import static inclui.formularios.control_entradas.k_entradas_tipo_texto;
 import innui.modelos.errores.oks;
 import static inweb.modelos_html.formularios.control_entradas.k_valores_mapa_style_texto_tex;
 import static inweb.modelos_html.formularios.web_formularios.k_fragmento_control_textareas;
+import static inweb.modelos_html.formularios.web_formularios.k_valores_mapa_valor_tex;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -52,6 +53,16 @@ public class control_textareas extends control_entradas {
         } catch (Exception e) {
             throw e;
         }
+    }
+    @Override
+    public boolean importar_captura(Object valor_del_objeto, oks ok, Object ... extras_array) throws Exception {
+        try {
+            if (ok.es == false) { return false; }
+            getValor().put(k_valores_mapa_valor_tex, valor_del_objeto.toString().replace("\r", ""));
+        } catch (Exception e) {
+            throw e;
+        }
+        return ok.es;        
     }
 
 }
