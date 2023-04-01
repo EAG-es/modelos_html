@@ -91,7 +91,6 @@ public class control_bucle_clave_valor extends control_textos {
                     + objeto_a_terminar.toString();
                 }
                 pos = pos + 1;
-                ok.es = (hacer_repetir_procesar(ok, extras_array) == false);
                 objeto_a_terminar = valor_de_captura; // Retorno si no se repite el bucle
             }
         } catch (Exception e) {
