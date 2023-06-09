@@ -35,6 +35,18 @@ public class control_tablas extends control_entradas {
         _control_tipo = k_entradas_tipo_texto;
     }    
     /**
+     * Ignorar el parámetro tipo_control
+     * @param tipo_control
+     * @param ok
+     * @param extras_array
+     * @return
+     * @throws Exception 
+     */
+    @Override
+    public boolean iniciar(String tipo_control, oks ok, Object ... extras_array) throws Exception {
+        return super.iniciar(k_entradas_tipo_texto, ok, extras_array);
+    }
+    /**
      * Entrega una representación de tabla, vacía, válida para el control.
      * @param ok
      * @param extras_array

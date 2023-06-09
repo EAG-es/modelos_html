@@ -1,5 +1,5 @@
 <div th:fragment="web_formularios"
-    th:style="${style_fragmento_tex}">
+    th:style="background:white;${style_fragmento_tex}">
     <div th:attr="${atributos_error_tex}"
         th:style="${style_mensaje_error_tex}"
         th:utext="${mensaje_error_tex}"></div>
@@ -51,8 +51,8 @@
     <div th:attr="${atributos_error_tex}"
         th:style="${style_mensaje_error_tex}"
         th:utext="${mensaje_error_tex}"></div>        
-    <spam th:text="${mensaje_de_captura_tex}"
-        th:style="${style_mensaje_de_captura_tex}"></spam>
+    <span th:text="${mensaje_de_captura_tex}"
+        th:style="${style_mensaje_de_captura_tex}"></span>
     <textarea th:id="${id_tex}"
         th:name="${clave_tex}"
         th:attr="${atributos_tex}"

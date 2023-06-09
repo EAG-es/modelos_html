@@ -33,6 +33,18 @@ public class control_selecciones extends control_entradas {
         fragmento_nombre = k_fragmento_control_selecciones;
     }    
     /**
+     * Ignorar el parámetro tipo_control
+     * @param tipo_control
+     * @param ok
+     * @param extras_array
+     * @return
+     * @throws Exception 
+     */
+    @Override
+    public boolean iniciar(String tipo_control, oks ok, Object ... extras_array) throws Exception {
+        return super.iniciar(k_entradas_tipo_texto, ok, extras_array);
+    }
+    /**
      * Carga el control con el contenido de un archivo de propiedades
      * @param ruta
      * @param ok
