@@ -29,7 +29,6 @@ public class control_selecciones extends control_entradas {
     public web_formularios _web_formulario = new web_formularios();
     
     public control_selecciones() {
-        _control_tipo = k_entradas_tipo_texto;
         fragmento_nombre = k_fragmento_control_selecciones;
     }    
     /**
@@ -42,7 +41,7 @@ public class control_selecciones extends control_entradas {
      */
     @Override
     public boolean iniciar(String tipo_control, oks ok, Object ... extras_array) throws Exception {
-        return super.iniciar(k_entradas_tipo_texto, ok, extras_array);
+        return ok.es; 
     }
     /**
      * Carga el control con el contenido de un archivo de propiedades

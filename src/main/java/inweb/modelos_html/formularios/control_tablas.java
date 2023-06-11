@@ -32,7 +32,6 @@ public class control_tablas extends control_entradas {
     public String fragmento_fila_nombre = null;
     
     public control_tablas() {
-        _control_tipo = k_entradas_tipo_texto;
     }    
     /**
      * Ignorar el parámetro tipo_control
@@ -44,7 +43,7 @@ public class control_tablas extends control_entradas {
      */
     @Override
     public boolean iniciar(String tipo_control, oks ok, Object ... extras_array) throws Exception {
-        return super.iniciar(k_entradas_tipo_texto, ok, extras_array);
+        return ok.es; 
     }
     /**
      * Entrega una representación de tabla, vacía, válida para el control.

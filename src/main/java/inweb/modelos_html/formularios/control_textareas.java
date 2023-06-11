@@ -48,7 +48,7 @@ public class control_textareas extends control_entradas {
             if (ok.es == false) { return null; }
             Map<String, String> nuevo_mapa = super._crear_valores_mapa(nuevos_datos_mapa, ok, extras_array);
             if (ok.es == false) { return null; }
-            nuevo_mapa.put(k_valores_mapa_style_texto_tex, "width:100%;height:140px;margin-top:5px;margin-bottom:5px;");
+            nuevo_mapa.put(k_valores_mapa_style_texto_tex, "width:95%;height:140px;margin-top:5px;margin-bottom:5px;margin-left:5px;margin-right:5px;");
             return nuevo_mapa;
         } catch (Exception e) {
             throw e;

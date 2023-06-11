@@ -301,10 +301,10 @@ public class control_entradas extends inclui.formularios.control_entradas {
                 if (ok.es == false) { return null; }
                 nuevo_mapa = new HashMap<>();
                 nuevo_mapa.putAll(web_formulario.valores_mapa);
-                nuevo_mapa.put(k_valores_mapa_style_texto_tex, "width:100%;height:28px;margin-top:5px;margin-bottom:5px;");
-                nuevo_mapa.put(k_valores_mapa_style_submit_tex, "width:100%;height:28px;margin-top:5px;margin-bottom:5px;background-color: darkseagreen;");
-                nuevo_mapa.put(k_valores_mapa_style_reset_tex, "width:100%;height:28px;margin-top:5px;margin-bottom:5px;background-color: darksalmon;");
-                nuevo_mapa.put(k_valores_mapa_style_tex, "height:28px;margin-top:5px;margin-bottom:5px;");
+                nuevo_mapa.put(k_valores_mapa_style_texto_tex, "width:95%;height:28px;margin-top:5px;margin-bottom:5px;margin-left:5px;margin-right:5px;");
+                nuevo_mapa.put(k_valores_mapa_style_submit_tex, "width:95%;height:28px;margin-top:5px;margin-bottom:5px;margin-left:5px;margin-right:5px;background-color: darkseagreen;");
+                nuevo_mapa.put(k_valores_mapa_style_reset_tex, "width:95%;height:28px;margin-top:5px;margin-bottom:5px;margin-left:5px;margin-right:5px;background-color: darksalmon;");
+                nuevo_mapa.put(k_valores_mapa_style_tex, "height:28px;margin-top:5px;margin-bottom:5px;margin-left:5px;margin-right:5px;");
                 if (nuevos_datos_mapa != null) {
                     nuevo_mapa.putAll(nuevos_datos_mapa);
                 }
