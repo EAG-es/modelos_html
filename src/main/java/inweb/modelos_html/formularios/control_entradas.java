@@ -359,10 +359,10 @@ public class control_entradas extends inclui.formularios.control_entradas {
      * @return true si hay que utilizar el valor previo, por defecto.
      * @throws Exception 
      */
-    @Override
-    public boolean _ser_valor_vacio(Object objeto_a_validar, oks ok, Object ... extras_array) throws Exception {
-        return false;
-    }    
+//    @Override
+//    public boolean _ser_valor_vacio(Object objeto_a_validar, oks ok, Object ... extras_array) throws Exception {
+//        return false;
+//    }    
     /**
      * Valida un valor vacío, si hay valor por defecto
      * @param objeto_a_validar

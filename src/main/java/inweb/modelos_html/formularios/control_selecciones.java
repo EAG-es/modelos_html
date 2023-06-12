@@ -156,5 +156,9 @@ public class control_selecciones extends control_entradas {
     public boolean importar_captura(Object valor_del_objeto, oks ok, Object ... extras_array) throws Exception {
         return _control_bucle_texto.importar_captura(valor_del_objeto, ok, extras_array);        
     }
-
+    
+    @Override
+    public boolean _ser_valor_vacio(Object objeto_a_validar, oks ok, Object ... extras_array) throws Exception {
+        return false;
+    } 
 }

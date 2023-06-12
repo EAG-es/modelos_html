@@ -175,4 +175,9 @@ public class control_tablas extends control_entradas {
         }
         return retorno_mapa;
     }
+    
+    @Override
+    public boolean _ser_valor_vacio(Object objeto_a_validar, oks ok, Object ... extras_array) throws Exception {
+        return false;
+    } 
 }

@@ -65,4 +65,9 @@ public class control_textos extends control_entradas {
         }
         return ok.es;
     }
+    
+    @Override
+    public boolean _ser_valor_vacio(Object objeto_a_validar, oks ok, Object ... extras_array) throws Exception {
+        return false;
+    } 
 }
