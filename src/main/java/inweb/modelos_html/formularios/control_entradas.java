@@ -123,8 +123,10 @@ public class control_entradas extends inclui.formularios.control_entradas {
                 }
                 if (this.opciones_mapa.containsKey(k_opciones_mapa_no_requerido) == false) {
                     if (atributos_tex.contains(k_atributo_required) == false) {
-                        atributos_tex = atributos_tex 
-                        + k_atributo_required;
+                        if (_control_tipo.equals(k_entradas_tipo_checkbox) == false) {  
+                            atributos_tex = atributos_tex 
+                              + k_atributo_required;
+                        }
                     }
                 } else {
                     if (atributos_tex.contains(k_atributo_required)) {
