@@ -171,13 +171,15 @@ public class control_bucle_clave_valor extends control_textos {
             if (ok.es == false) { return false; }
             String clave_tex;
             clave_tex = getValor().get(k_valores_mapa_clave_tex);
-            String atributos = getValor().get(k_valores_mapa_atributos_tex);
-            if (clave_tex.equals(bucle_datos_seleccion)) {
-                atributos = atributos + k_atributo_selected;
-            } else {
-                atributos = atributos.replace(k_atributo_selected, "");
+            if (clave_tex != null) {
+                String atributos = getValor().get(k_valores_mapa_atributos_tex);
+                if (clave_tex.equals(bucle_datos_seleccion)) {
+                    atributos = atributos + k_atributo_selected;
+                } else {
+                    atributos = atributos.replace(k_atributo_selected, "");
+                }
+                getValor().put(k_valores_mapa_atributos_tex, atributos);
             }
-            getValor().put(k_valores_mapa_atributos_tex, atributos);
         } catch (Exception e) {
             throw e;
         }

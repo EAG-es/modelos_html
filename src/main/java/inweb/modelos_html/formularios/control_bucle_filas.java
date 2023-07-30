@@ -21,6 +21,9 @@ public class control_bucle_filas extends control_bucle_clave_valor {
         ResourceBundle in;
         try {
             if (ok.es == false) { return null; }
+            if (bucle_datos_lista.isEmpty()) {
+                return valor;
+            }
             Object object = bucle_datos_lista.get(pos).getValue();
             if (object instanceof LinkedHashMap) {
                 clave = bucle_datos_lista.get(pos).getKey();
