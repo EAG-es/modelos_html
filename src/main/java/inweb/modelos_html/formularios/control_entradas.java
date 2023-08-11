@@ -258,10 +258,10 @@ public class control_entradas extends inclui.formularios.control_entradas {
                     in = ResourceBundles.getBundle(k_in_ruta);
                     ok.setTxt(tr.in(in, "Se espera que el valor del control sea: Map<String, String> "));
                 }
-            } else {
-                if (this.valor == null) {
-                    this.valor = new HashMap<>();
-                }
+//            } else {
+//                if (this.valor == null) {
+//                    this.valor = new HashMap<>();
+//                }
             }
             if (ok.es == false) { return false; }
             super.poner_en_formulario(formulario, clave, valor, mensaje_de_captura, opciones_mapa, ok, extras_array);
@@ -277,8 +277,14 @@ public class control_entradas extends inclui.formularios.control_entradas {
                     this.opciones_mapa.remove(k_web_formularios_procesamiento_plantilla);
                 }
             }
-            if (ok.es) {
-                this.valor = _crear_valores_mapa(getValor(), ok, extras_array);
+            if (ok.es == false) { return false; }
+            this.valor = _crear_valores_mapa(getValor(), ok, extras_array);
+            if (ok.es == false) { return false; }
+            if (this._control_tipo.equals(k_entradas_tipo_checkbox)) {
+                if (getValor().get(k_valores_mapa_valor_tex) == null
+                 || getValor().get(k_valores_mapa_valor_tex).trim().isEmpty()) {
+                    getValor().put(k_valores_mapa_valor_tex, k_atributo_checked);
+                }
             }
         } catch (Exception e) {
             throw e;
@@ -331,11 +337,9 @@ public class control_entradas extends inclui.formularios.control_entradas {
             if (ok.es == false) { return false; }
             if (_control_tipo.equals(k_entradas_tipo_checkbox)
              || _control_tipo.equals(k_entradas_tipo_radio)) {
-                if (valor_del_objeto == null) {
-                    valor_del_objeto = "";
-                }
                 String atributos = getValor().get(k_valores_mapa_atributos_tex);
-                if (valor != null) {
+                if (valor != null
+                 && valor_del_objeto != null) {
                     String valor_tex = getValor().get(k_valores_mapa_valor_tex);
                     if (valor_tex.equals(valor_del_objeto.toString())) {                                    
                         atributos = atributos + k_atributo_checked;
@@ -344,7 +348,11 @@ public class control_entradas extends inclui.formularios.control_entradas {
                     }
                     getValor().put(k_valores_mapa_atributos_tex, atributos);
                 }
-            } else if (valor != null) {
+                if (valor_del_objeto == null) {
+                    valor_del_objeto = k_atributo_checked;
+                }
+            }
+            if (valor != null) {
                 getValor().put(k_valores_mapa_valor_tex, valor_del_objeto.toString());
             }
         } catch (Exception e) {
